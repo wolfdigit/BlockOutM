@@ -13,7 +13,7 @@ import android.opengl.GLSurfaceView;
 class GameRenderer implements GLSurfaceView.Renderer {
 	private Cube mCube;
     public GameRenderer() {
-        mGameBoard = new GameBoard(new Setting());
+        mGameBoard = new GameBoard();
         //mCube = new Cube();
     }
     float near=7.0f;

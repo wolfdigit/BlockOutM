@@ -28,15 +28,13 @@ import javax.microedition.khronos.opengles.GL10;
  */
 class GameBoard
 {
-	private Setting mSetting;
 	public float H, W, D;
 	int h, w, d;
 	private ShortBuffer mWallFaceIdxBuffer, mWallGridIdxBuffer, mCoverGridIdxBuffer, mStraightDownIdxBuffer;
-    public GameBoard(Setting setting)
+    public GameBoard()
     {
-    	mSetting = setting;
         float one = 1.0f;
-        h=mSetting.h; w=mSetting.w; d=mSetting.d;
+        h=Setting.h; w=Setting.w; d=Setting.d;
         H = h * one; W = w * one; D = d * one;
         float vertices[] = new float[(h+1)*(w+1)*(d+1)*3];
         short straightDownIdx[] = new short[(h-1)*(w-1)*2];
@@ -213,19 +211,19 @@ class GameBoard
         //gl.glColorPointer(4, GL10.GL_FIXED, 0, mColorBuffer);
         //gl.glDrawElements(gl.GL_TRIANGLES, 36, gl.GL_UNSIGNED_BYTE, mIndexBuffer);
         gl.glDisable(GL10.GL_DEPTH_TEST);
-        if (mSetting.drawWallFace) {
-            gl.glColor4f(mSetting.wallFaceColor[0], mSetting.wallFaceColor[1], mSetting.wallFaceColor[2], mSetting.wallFaceColor[3]);
+        if (Setting.drawWallFace) {
+            gl.glColor4f(Setting.wallFaceColor[0], Setting.wallFaceColor[1], Setting.wallFaceColor[2], Setting.wallFaceColor[3]);
             gl.glDrawElements(GL10.GL_TRIANGLES, 36, GL10.GL_UNSIGNED_SHORT, mWallFaceIdxBuffer);
         }
-        gl.glColor4f(mSetting.wallGridColor[0], mSetting.wallGridColor[1], mSetting.wallGridColor[2], mSetting.wallGridColor[3]);
+        gl.glColor4f(Setting.wallGridColor[0], Setting.wallGridColor[1], Setting.wallGridColor[2], Setting.wallGridColor[3]);
         gl.glDrawElements(GL10.GL_LINES, ((h+1)*3+(w+1)*3+(d+1)*4)*2, GL10.GL_UNSIGNED_SHORT, mWallGridIdxBuffer);
         gl.glEnable(GL10.GL_DEPTH_TEST);
-        if (mSetting.drawCoverGrid) {
-            gl.glColor4f(mSetting.coverGridColor[0], mSetting.coverGridColor[1], mSetting.coverGridColor[2], mSetting.coverGridColor[3]);
+        if (Setting.drawCoverGrid) {
+            gl.glColor4f(Setting.coverGridColor[0], Setting.coverGridColor[1], Setting.coverGridColor[2], Setting.coverGridColor[3]);
             gl.glDrawElements(GL10.GL_LINES, ((h+1)+(w+1))*2, GL10.GL_UNSIGNED_SHORT, mCoverGridIdxBuffer);
         }
-        if (mSetting.drawCoverGrid) {
-            gl.glColor4f(mSetting.straightDownColor[0], mSetting.straightDownColor[1], mSetting.straightDownColor[2], mSetting.straightDownColor[3]);
+        if (Setting.drawCoverGrid) {
+            gl.glColor4f(Setting.straightDownColor[0], Setting.straightDownColor[1], Setting.straightDownColor[2], Setting.straightDownColor[3]);
             gl.glDrawElements(GL10.GL_LINES, ((h-1)*(w-1))*2, GL10.GL_UNSIGNED_SHORT, mStraightDownIdxBuffer);
         }
     }

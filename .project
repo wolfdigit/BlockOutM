@@ -3,6 +3,7 @@
 	<name>BlockOutM</name>
 	<comment></comment>
 	<projects>
+		<project>ApiDemos</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

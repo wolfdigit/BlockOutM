@@ -4,7 +4,7 @@ class Setting {
 	static int h=5, w=5, d=10;
 	static boolean drawWallFace=true;
 	static boolean drawStraightDown=true;
-	static boolean drawCoverGrid=true;
+	static boolean drawCoverGrid=false;
 	static float wallFaceColor[]={0.3f, 0.3f, 0.3f, 1.0f};
 	static float wallGridColor[]={1.0f, 1.0f, 1.0f, 1.0f};
 	static float coverGridColor[]={0.0f, 0.0f, 1.0f, 0.3f};

@@ -11,7 +11,7 @@ import android.opengl.GLSurfaceView;
  */
 
 class GameRenderer implements GLSurfaceView.Renderer {
-	private Cube mCube;
+	//private Cube mCube;
     public GameRenderer() {
         mGameBoard = new GameBoard();
         //mCube = new Cube();

@@ -8,7 +8,7 @@
     android:id="@+id/text1"
     android:layout_height="wrap_content" 
     android:text="@string/hello"
-    android:layout_width="wrap_content"/>
+    android:layout_width="wrap_content" android:textSize="12pt"/>
 </LinearLayout>
 <android.opengl.GLSurfaceView android:id="@+id/GLSurfaceView" android:layout_height="fill_parent" android:layout_width="fill_parent"></android.opengl.GLSurfaceView>
 

@@ -28,7 +28,9 @@ public class GameActivity extends Activity {
         //setContentView(mGLSurfaceView);
         mCore = new GameCore((TextView)findViewById(R.id.text1));
 		sm=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		sm.registerListener(new AccelListener(mCore), sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+		sm.registerListener(new AccelListener(mCore), sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+		sm.registerListener(new AccelListener(mCore), sm.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_UI);
+		
 
 
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);

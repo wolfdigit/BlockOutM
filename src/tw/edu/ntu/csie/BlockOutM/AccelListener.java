@@ -22,33 +22,42 @@ public class AccelListener implements SensorEventListener {
 		if (ang<-Math.PI) return smallAng(ang+Math.PI);
 		return ang;
 	}
-	double thres0=0.1;
-	double thres1=0.23;
-	double thres2=0.38;
-	long thres4=500000000;
+	double midle0=0;
+	double thres0=0.3;
+	double midle1=0;
+	double thres1=0.18;
+	double midle2=0.6;
+	double thres2=0.2;
+	long thres4=300000000;
 	long prevTime;
 	int rotX(double[] ang, double[] prevAng) {
-		if (smallAng(ang[0]-prevAng[0])>thres0) return 1;
-		if (smallAng(ang[0]-prevAng[0])<-thres0) return -1;
+		if (midle1-thres1<prevAng[1]&&prevAng[1]<midle1+thres1 && midle2-thres2<prevAng[2]&&prevAng[2]<midle2+thres2) {
+			if (smallAng(ang[0]-midle0)>thres0&&smallAng(prevAng[0]-midle0)<thres0) return 1;
+			if (smallAng(ang[0]-midle0)<-thres0&&smallAng(prevAng[0]-midle0)>-thres0) return -1;
+		}
 		return 0;
 	}
 	int rotY(double[] ang, double[] prevAng) {
-		if (smallAng(ang[1]-prevAng[1])>thres1) return 1;
-		if (smallAng(ang[1]-prevAng[1])<-thres1) return -1;
+		if (ang[1]>midle1+thres1&&prevAng[1]<midle1+thres1) return 1;
+		if (ang[1]<midle1-thres1&&prevAng[1]>midle1-thres1) return -1;
 		return 0;
 	}
 	int rotZ(double[] ang, double[] prevAng) {
-		if (smallAng(ang[2]-prevAng[2])>thres2) return 1;
-		if (smallAng(ang[2]-prevAng[2])<-thres2) return -1;
+		if (ang[2]>midle2+thres2&&prevAng[2]<midle2+thres2) return 1;
+		if (ang[2]<midle2-thres2&&prevAng[2]>midle2-thres2) return -1;
 		return 0;
 	}
 	@Override
 	public void onSensorChanged(SensorEvent arg0) {
 		double[] ang=new double[3];
-		switch (arg0.sensor.getType()) {
-		case Sensor.TYPE_ORIENTATION:
+		if (arg0.sensor.getType()==Sensor.TYPE_ORIENTATION) {
 			ang[0] = arg0.values[0]*Math.PI/180;
-			if (prevAng[0]!=Double.NaN&&arg0.timestamp-prevTime>thres4) {
+			if (prevAng[0]==Double.NaN) {
+				prevAng[0] = ang[0];
+				midle0 = prevAng[0];
+				return;
+			}
+			if (arg0.timestamp-prevTime>thres4) {
 				if (rotX(ang, prevAng)==1) {
 					prevTime=arg0.timestamp;
 					mCore.rotate(0);
@@ -59,23 +68,30 @@ public class AccelListener implements SensorEventListener {
 				}
 			}
 			prevAng[0] = ang[0];
-			break;
-		case Sensor.TYPE_ACCELEROMETER:
+		}
+		if (arg0.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
 			ang[1] = Math.atan2(arg0.values[1],arg0.values[0]);
 			ang[2] = Math.atan2(arg0.values[2],arg0.values[0]);
-			if (prevAng[1]!=Double.NaN&&arg0.timestamp-prevTime>thres4) {
+			if (prevAng[1]==Double.NaN) {
+				prevAng[1] = ang[1];
+				midle1 = prevAng[1];
+				prevAng[2] = ang[2];
+				midle2 = prevAng[2];
+				return;
+			}
+			if (arg0.timestamp-prevTime>thres4) {
 				if (rotY(ang, prevAng)==1) {
 					prevTime=arg0.timestamp;
 					mCore.rotate(1);
-				}
+				} else
 				if (rotY(ang, prevAng)==-1) {
 					prevTime=arg0.timestamp;
 					mCore.rotate(4);
-				}
+				} else
 				if (rotZ(ang, prevAng)==1) {
 					prevTime=arg0.timestamp;
 					mCore.rotate(2);
-				}
+				} else
 				if (rotZ(ang, prevAng)==-1) {
 					prevTime=arg0.timestamp;
 					mCore.rotate(5);
@@ -83,8 +99,12 @@ public class AccelListener implements SensorEventListener {
 			}
 			prevAng[1] = ang[1];
 			prevAng[2] = ang[2];
-			break;
 		}
 	}
 
+	void reset() {
+		midle0 = prevAng[0];
+		midle1 = prevAng[1];
+		midle2 = prevAng[2];
+	}
 }

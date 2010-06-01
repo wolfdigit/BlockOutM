@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -28,8 +29,10 @@ public class GameActivity extends Activity {
         //setContentView(mGLSurfaceView);
         mCore = new GameCore((TextView)findViewById(R.id.text1));
 		sm=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		sm.registerListener(new AccelListener(mCore), sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-		sm.registerListener(new AccelListener(mCore), sm.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_UI);
+		sm.registerListener(mCore.sensorListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+		sm.registerListener(mCore.sensorListener, sm.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);
+		Thread tCore = new Thread(mCore);
+		tCore.start();
 		
 
 
@@ -57,5 +60,13 @@ public class GameActivity extends Activity {
         mGLSurfaceView.onPause();
     }
 
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    	super.onKeyDown(keyCode, event);
+    	if (keyCode==KeyEvent.KEYCODE_DPAD_CENTER) {
+    		mCore.sensorListener.reset();
+    	}
+    	return true;
+    }
+    
     private GLSurfaceView mGLSurfaceView;
 }

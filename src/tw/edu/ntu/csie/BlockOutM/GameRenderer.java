@@ -18,6 +18,10 @@ class GameRenderer implements GLSurfaceView.Renderer {
     }
     float near=7.0f;
 
+    public void buildBlock(Block block) {
+    	mGameBoard.buildBlock(block);
+    }
+    
     public void onDrawFrame(GL10 gl) {
         /*
          * Usually, the first thing one might want to do is to clear

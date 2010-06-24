@@ -8,6 +8,8 @@ class Setting {
 	static float wallFaceColor[]={0.3f, 0.3f, 0.3f, 1.0f};
 	static float wallGridColor[]={1.0f, 1.0f, 1.0f, 1.0f};
 	static float coverGridColor[]={0.0f, 0.0f, 1.0f, 0.3f};
+	static float blockColor[]={1.0f, 0.5f, 0.5f, 1.0f};
 	static float straightDownColor[]=coverGridColor;
-	static Block.blockShape blockSet[] = Block.setA;
+	static int blockSet = 0;
+	static int slipTime = 500;
 }

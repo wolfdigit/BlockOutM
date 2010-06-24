@@ -31,6 +31,8 @@ class GameBoard
 	public float H, W, D;
 	int h, w, d;
 	private ShortBuffer mWallFaceIdxBuffer, mWallGridIdxBuffer, mCoverGridIdxBuffer, mStraightDownIdxBuffer;
+	private ShortBuffer mBlockLineIdxBuffer, mPileLineIdxBuffer, mPileFaceIdxBuffer;
+	short pointIdx[][][];
     public GameBoard()
     {
         float one = 1.0f;
@@ -38,7 +40,7 @@ class GameBoard
         H = h * one; W = w * one; D = d * one;
         float vertices[] = new float[(h+1)*(w+1)*(d+1)*3];
         short straightDownIdx[] = new short[(h-1)*(w-1)*2];
-        short pointIdx[][][] = new short[d+1][][];
+        pointIdx = new short[d+1][][];
         short vertexCount = 0;
         for (int i=0; i<=d; i++) {
         	pointIdx[i] = new short[h+1][];
@@ -148,6 +150,7 @@ class GameBoard
         mIndexBuffer.put(indices);
         mIndexBuffer.position(0);
 */
+
         ByteBuffer wfbb = ByteBuffer.allocateDirect(wallFaceIdx.length*2);
         wfbb.order(ByteOrder.nativeOrder());
         mWallFaceIdxBuffer = wfbb.asShortBuffer();
@@ -171,14 +174,72 @@ class GameBoard
         mStraightDownIdxBuffer = apbb.asShortBuffer();
         mStraightDownIdxBuffer.put(straightDownIdx);
         mStraightDownIdxBuffer.position(0);
+
     }
 
+    int blockLineSize;
+    public void buildBlock(Block block) {
+    	int n = block.block.length;
+    	short blockLineIdx[] = new short[n*12*2];
+    	blockLineSize = n*12*2;
+    	for (int i=0; i<n; i++) {
+    		int x = block.x(i);
+    		int y = block.y(i);
+    		int z = block.z(i);
+    		int idx = i*12*2;
+
+    		blockLineIdx[idx++] = pointIdx[x][y][z];
+            blockLineIdx[idx++] = pointIdx[x+1][y][z];
+            blockLineIdx[idx++] = pointIdx[x+1][y][z];
+            blockLineIdx[idx++] = pointIdx[x+1][y+1][z];
+            blockLineIdx[idx++] = pointIdx[x+1][y+1][z];
+            blockLineIdx[idx++] = pointIdx[x][y+1][z];
+            blockLineIdx[idx++] = pointIdx[x][y+1][z];
+            blockLineIdx[idx++] = pointIdx[x][y][z];
+
+    		blockLineIdx[idx++] = pointIdx[x][y][z+1];
+            blockLineIdx[idx++] = pointIdx[x+1][y][z+1];
+            blockLineIdx[idx++] = pointIdx[x+1][y][z+1];
+            blockLineIdx[idx++] = pointIdx[x+1][y+1][z+1];
+            blockLineIdx[idx++] = pointIdx[x+1][y+1][z+1];
+            blockLineIdx[idx++] = pointIdx[x][y+1][z+1];
+            blockLineIdx[idx++] = pointIdx[x][y+1][z+1];
+            blockLineIdx[idx++] = pointIdx[x][y][z+1];
+
+            blockLineIdx[idx++] = pointIdx[x][y][z];
+            blockLineIdx[idx++] = pointIdx[x][y][z+1];
+            blockLineIdx[idx++] = pointIdx[x+1][y][z];
+            blockLineIdx[idx++] = pointIdx[x+1][y][z+1];
+            blockLineIdx[idx++] = pointIdx[x+1][y+1][z];
+            blockLineIdx[idx++] = pointIdx[x+1][y+1][z+1];
+            blockLineIdx[idx++] = pointIdx[x][y+1][z];
+            blockLineIdx[idx++] = pointIdx[x][y+1][z+1];
+    	}
+        ByteBuffer blbb = ByteBuffer.allocateDirect(blockLineIdx.length*2);
+        blbb.order(ByteOrder.nativeOrder());
+        mBlockLineIdxBuffer = blbb.asShortBuffer();
+        mBlockLineIdxBuffer.put(blockLineIdx);
+        mBlockLineIdxBuffer.position(0);
+    }
+    
+    public void buildPile() {
+    	//
+    }
+    
+    private void drawBlock(GL10 gl) {
+    	if (mBlockLineIdxBuffer!=null) {
+    		gl.glColor4f(Setting.blockColor[0], Setting.blockColor[1], Setting.blockColor[2], Setting.blockColor[3]);
+    		gl.glDrawElements(GL10.GL_LINES, blockLineSize, GL10.GL_UNSIGNED_SHORT, mBlockLineIdxBuffer);
+    	}
+    }
+    
     public void draw(GL10 gl)
     {
 //        gl.glFrontFace(gl.GL_CW);
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
         //gl.glColorPointer(4, GL10.GL_FIXED, 0, mColorBuffer);
         //gl.glDrawElements(gl.GL_TRIANGLES, 36, gl.GL_UNSIGNED_BYTE, mIndexBuffer);
+
         gl.glDisable(GL10.GL_DEPTH_TEST);
         if (Setting.drawWallFace) {
             gl.glColor4f(Setting.wallFaceColor[0], Setting.wallFaceColor[1], Setting.wallFaceColor[2], Setting.wallFaceColor[3]);
@@ -195,6 +256,8 @@ class GameBoard
             gl.glColor4f(Setting.straightDownColor[0], Setting.straightDownColor[1], Setting.straightDownColor[2], Setting.straightDownColor[3]);
             gl.glDrawElements(GL10.GL_LINES, ((h-1)*(w-1))*2, GL10.GL_UNSIGNED_SHORT, mStraightDownIdxBuffer);
         }
+
+        drawBlock(gl);
     }
 
     private FloatBuffer   mVertexBuffer;

@@ -14,6 +14,7 @@ import android.widget.TextView;
 public class GameActivity extends Activity {
 	GameCore mCore;
 	SensorManager sm;
+	GameRenderer mGameRenderer;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,9 +26,10 @@ public class GameActivity extends Activity {
         // Activity
         setContentView(R.layout.main);
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.GLSurfaceView);
-        mGLSurfaceView.setRenderer(new GameRenderer());
+        mGameRenderer = new GameRenderer();
+        mGLSurfaceView.setRenderer(mGameRenderer);
         //setContentView(mGLSurfaceView);
-        mCore = new GameCore((TextView)findViewById(R.id.text1));
+        mCore = new GameCore((TextView)findViewById(R.id.text1), mGameRenderer);
 		sm=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		sm.registerListener(mCore.sensorListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
 		sm.registerListener(mCore.sensorListener, sm.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);

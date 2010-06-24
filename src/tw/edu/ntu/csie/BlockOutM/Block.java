@@ -2,28 +2,35 @@ package tw.edu.ntu.csie.BlockOutM;
 import java.security.SecureRandom;
 
 public class Block {
-	static class blockShape {
-		byte cube[][];
-		byte nCube;
-		blockShape(){}
-		blockShape(byte[][] array) {
-			nCube = (byte)array.length;
-			cube = new byte[nCube][];
-			for (int i=0; i<nCube; i++) {
-				cube[i] = array[i];
+	int position[] = {Setting.d-1,0,0};
+	byte block[][];
+	static Block[][] set = {
+		{
+		new Block(new byte[][]{{0,0,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}})
+		}
+	};
+	int x(int idx) {
+		return position[0]+block[idx][0];
+	}
+	int y(int idx) {
+		return position[1]+block[idx][1];
+	}
+	int z(int idx) {
+		return position[2]+block[idx][2];
+	}
+	Block(byte[][] blocks) {
+		this.block = blocks;
+	}
+	Block(int setIdx) {
+		byte[][] origBlock = set[setIdx][new SecureRandom().nextInt(set[setIdx].length)].block;
+		this.block = new byte[origBlock.length][];
+		for (int i = 0; i<origBlock.length; i++) {
+			this.block[i] = new byte[origBlock[i].length];
+			for (int j=0; j<origBlock[i].length; j++) {
+				this.block[i][j] = origBlock[i][j];
 			}
 		}
-	}
-	static blockShape setA[] = {
-		new blockShape(new byte[][]{{0,0,0}}),
-		new blockShape(new byte[][]{{0,0,0}, {1,0,0}}),
-		new blockShape(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}})
-		};
-	blockShape shape;
-	Block() {
-		this((byte)(new SecureRandom().nextInt()%Setting.blockSet.length));
-	}
-	Block(byte idx) {
-		shape = Setting.blockSet[idx];
 	}
 }

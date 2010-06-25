@@ -31,13 +31,17 @@ class GameBoard
 	public float H, W, D;
 	int h, w, d;
 	private ShortBuffer mWallFaceIdxBuffer, mWallGridIdxBuffer, mCoverGridIdxBuffer, mStraightDownIdxBuffer;
-	private ShortBuffer mBlockLineIdxBuffer, mPileLineIdxBuffer, mPileFaceIdxBuffer;
+	private ShortBuffer mBlockLineIdxBuffer, mPileLineIdxBuffer[], mPileFaceIdxBuffer[];
 	short pointIdx[][][];
     public GameBoard()
     {
         float one = 1.0f;
         h=Setting.h; w=Setting.w; d=Setting.d;
         H = h * one; W = w * one; D = d * one;
+        mPileLineIdxBuffer = new ShortBuffer[Setting.d];
+        pileLineSize = new int[Setting.d];
+        mPileFaceIdxBuffer = new ShortBuffer[Setting.d];
+        pileFaceSize = new int[Setting.d];
         float vertices[] = new float[(h+1)*(w+1)*(d+1)*3];
         short straightDownIdx[] = new short[(h-1)*(w-1)*2];
         pointIdx = new short[d+1][][];
@@ -222,8 +226,124 @@ class GameBoard
         mBlockLineIdxBuffer.position(0);
     }
     
-    public void buildPile() {
-    	//
+    int pileLineSize[], pileFaceSize[];
+    public void buildPile(boolean occupy[][][]) {
+    	for (int x=0; x<Setting.d; x++) {
+    		int n=0;
+    		for (int y=0; y<Setting.h; y++) {
+    			for (int z=0; z<Setting.w; z++) {
+    				if (occupy[x][y][z]) {
+    					n++;
+    				}
+    			}
+    		}
+    		int idx;
+    		short pileLineIdx[] = new short[n*12*2];
+        	pileLineSize[x] = n*12*2;
+    		idx=0;
+    		for (int y=0; y<Setting.h; y++) {
+    			for (int z=0; z<Setting.w; z++) {
+    				if (occupy[x][y][z]) {
+    		    		pileLineIdx[idx++] = pointIdx[x][y][z];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y][z];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y][z];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y+1][z];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y+1][z];
+    		            pileLineIdx[idx++] = pointIdx[x][y+1][z];
+    		            pileLineIdx[idx++] = pointIdx[x][y+1][z];
+    		            pileLineIdx[idx++] = pointIdx[x][y][z];
+
+    		    		pileLineIdx[idx++] = pointIdx[x][y][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x][y+1][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x][y+1][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x][y][z+1];
+
+    		            pileLineIdx[idx++] = pointIdx[x][y][z];
+    		            pileLineIdx[idx++] = pointIdx[x][y][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y][z];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y+1][z];
+    		            pileLineIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		            pileLineIdx[idx++] = pointIdx[x][y+1][z];
+    		            pileLineIdx[idx++] = pointIdx[x][y+1][z+1];
+    				}
+    			}
+    		}
+            ByteBuffer plbb = ByteBuffer.allocateDirect(pileLineIdx.length*2);
+            plbb.order(ByteOrder.nativeOrder());
+            mPileLineIdxBuffer[x] = plbb.asShortBuffer();
+            mPileLineIdxBuffer[x].put(pileLineIdx);
+            mPileLineIdxBuffer[x].position(0);
+
+    		short pileFaceIdx[] = new short[n*5*2*3];
+        	pileFaceSize[x] = n*5*2*3;
+    		idx=0;
+    		for (int y=0; y<Setting.h; y++) {
+    			for (int z=0; z<Setting.w; z++) {
+    				if (occupy[x][y][z]) {
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z];
+
+    		    		pileFaceIdx[idx++] = pointIdx[x][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y+1][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y+1][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y+1][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z];
+
+    		    		
+    		    		pileFaceIdx[idx++] = pointIdx[x][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y+1][z];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y][z+1];
+    		    		pileFaceIdx[idx++] = pointIdx[x][y+1][z+1];
+    				}
+    			}
+    		}
+            ByteBuffer pfbb = ByteBuffer.allocateDirect(pileFaceIdx.length*2);
+            pfbb.order(ByteOrder.nativeOrder());
+            mPileFaceIdxBuffer[x] = pfbb.asShortBuffer();
+            mPileFaceIdxBuffer[x].put(pileFaceIdx);
+            mPileFaceIdxBuffer[x].position(0);
+    	}
+    }
+
+    private void drawPile(GL10 gl) {
+    	for (int x=0; x<Setting.d; x++) {
+//            gl.glDisable(GL10.GL_DEPTH_TEST);
+    		int cf = x%Setting.pileFaceColor.length;
+    		if (mPileFaceIdxBuffer[x]!=null) {
+    			gl.glColor4f(Setting.pileFaceColor[cf][0], Setting.pileFaceColor[cf][1], Setting.pileFaceColor[cf][2], Setting.pileFaceColor[cf][3]);
+    			gl.glDrawElements(GL10.GL_TRIANGLES, pileFaceSize[x], GL10.GL_UNSIGNED_SHORT, mPileFaceIdxBuffer[x]);
+    		}
+    		int cl = x%Setting.pileLineColor.length;
+    		if (mPileLineIdxBuffer[x]!=null) {
+    			gl.glColor4f(Setting.pileLineColor[cl][0], Setting.pileLineColor[cl][1], Setting.pileLineColor[cl][2], Setting.pileLineColor[cl][3]);
+    			gl.glDrawElements(GL10.GL_LINES, pileLineSize[x], GL10.GL_UNSIGNED_SHORT, mPileLineIdxBuffer[x]);
+    		}
+//            gl.glEnable(GL10.GL_DEPTH_TEST);
+    	}
     }
     
     private void drawBlock(GL10 gl) {
@@ -243,7 +363,7 @@ class GameBoard
         gl.glDisable(GL10.GL_DEPTH_TEST);
         if (Setting.drawWallFace) {
             gl.glColor4f(Setting.wallFaceColor[0], Setting.wallFaceColor[1], Setting.wallFaceColor[2], Setting.wallFaceColor[3]);
-            gl.glDrawElements(GL10.GL_TRIANGLES, 36, GL10.GL_UNSIGNED_SHORT, mWallFaceIdxBuffer);
+            gl.glDrawElements(GL10.GL_TRIANGLES, 30, GL10.GL_UNSIGNED_SHORT, mWallFaceIdxBuffer);
         }
         gl.glColor4f(Setting.wallGridColor[0], Setting.wallGridColor[1], Setting.wallGridColor[2], Setting.wallGridColor[3]);
         gl.glDrawElements(GL10.GL_LINES, ((h+1)*3+(w+1)*3+(d+1)*4)*2, GL10.GL_UNSIGNED_SHORT, mWallGridIdxBuffer);
@@ -257,6 +377,7 @@ class GameBoard
             gl.glDrawElements(GL10.GL_LINES, ((h-1)*(w-1))*2, GL10.GL_UNSIGNED_SHORT, mStraightDownIdxBuffer);
         }
 
+        drawPile(gl);
         drawBlock(gl);
     }
 

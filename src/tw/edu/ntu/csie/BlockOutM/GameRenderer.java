@@ -18,6 +18,10 @@ class GameRenderer implements GLSurfaceView.Renderer {
     }
     float near=7.0f;
 
+    public void buildPile(boolean occupy[][][]) {
+    	mGameBoard.buildPile(occupy);
+    }
+    
     public void buildBlock(Block block) {
     	mGameBoard.buildBlock(block);
     }
@@ -108,8 +112,8 @@ class GameRenderer implements GLSurfaceView.Renderer {
          gl.glEnable(GL10.GL_CULL_FACE);
          gl.glShadeModel(GL10.GL_SMOOTH);
          gl.glEnable(GL10.GL_DEPTH_TEST);
-         //gl.glEnable (gl.GL_BLEND); 
-         //gl.glBlendFunc (gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+         gl.glEnable (gl.GL_BLEND); 
+         gl.glBlendFunc (gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
     }
     private GameBoard mGameBoard;
 //    private float mAngle;

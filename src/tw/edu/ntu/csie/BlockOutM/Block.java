@@ -6,9 +6,10 @@ public class Block {
 	byte block[][];
 	static Block[][] set = {
 		{
-		new Block(new byte[][]{{0,0,0}}),
+/*		new Block(new byte[][]{{0,0,0}}),
 		new Block(new byte[][]{{0,0,0}, {1,0,0}}),
-		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}})
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}}),*/
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}, {2,0,0}})
 		}
 	};
 	int x(int idx) {
@@ -24,13 +25,24 @@ public class Block {
 		this.block = blocks;
 	}
 	Block(int setIdx) {
-		byte[][] origBlock = set[setIdx][new SecureRandom().nextInt(set[setIdx].length)].block;
-		this.block = new byte[origBlock.length][];
-		for (int i = 0; i<origBlock.length; i++) {
-			this.block[i] = new byte[origBlock[i].length];
-			for (int j=0; j<origBlock[i].length; j++) {
-				this.block[i][j] = origBlock[i][j];
+		this.block = set[setIdx][new SecureRandom().nextInt(set[setIdx].length)].cloneBlock();
+	}
+	public byte[][] cloneBlock() {
+		byte[][] rtnv = new byte[this.block.length][];
+		for (int i = 0; i<this.block.length; i++) {
+			rtnv[i] = new byte[this.block[i].length];
+			for (int j=0; j<this.block[i].length; j++) {
+				rtnv[i][j] = this.block[i][j];
 			}
 		}
+		return rtnv;
+	}
+	public Block clone() {
+		Block rtnv = new Block(null);
+		rtnv.block = this.cloneBlock();
+		rtnv.position[0] = this.position[0];
+		rtnv.position[1] = this.position[1];
+		rtnv.position[2] = this.position[2];
+		return rtnv;
 	}
 }

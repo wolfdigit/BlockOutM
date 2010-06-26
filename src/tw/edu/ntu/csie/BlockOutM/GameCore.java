@@ -1,9 +1,11 @@
 package tw.edu.ntu.csie.BlockOutM;
 
+import android.os.Handler;
+import android.os.Message;
 import android.widget.TextView;
 
 public class GameCore implements Runnable {
-	TextView mText1;
+	Handler txtH;
 	GameRenderer mRenderer;
 	AccelListener sensorListener;
 	int[] count = new int[6];
@@ -11,7 +13,7 @@ public class GameCore implements Runnable {
 	int occupyCount[];
 	Block block;
 	int score;
-	GameCore (TextView text1, GameRenderer renderer) {
+	GameCore (Handler txtH, GameRenderer renderer) {
 		score = 0;
 		occupy = new boolean[Setting.d][][];
 		occupyCount = new int[Setting.d];
@@ -25,18 +27,26 @@ public class GameCore implements Runnable {
 				}
 			}
 		}
-		mText1 = text1;
+		this.txtH = txtH;
 		mRenderer = renderer;
 		sensorListener = new AccelListener(this);
 	}
+
+	void displayMsg(String str) {
+		Message m=new Message();
+		m.obj=str;
+		txtH.sendMessage(m);
+	}
+	
 	void gameOver() {
+		displayMsg("GameOver\nscore:"+score);
 	}
 
 	void displayScore() {
-		
+		displayMsg("score:"+score);
 	}
 	
-	boolean fitin() {
+	private boolean fitin() {
 		int miny, maxy, minz, maxz;
 		int minx, maxx;
 			miny=Setting.h; maxy=0; minz=Setting.w; maxz=0;
@@ -75,7 +85,7 @@ public class GameCore implements Runnable {
 
 	void rotate(int dir) {
 		count[dir]++;
-        mText1.setText(count[0]+"\n"+count[1]+"\n"+count[2]+"\n"+count[3]+"\n"+count[4]+"\n"+count[5]);
+		displayMsg(count[0]+"\n"+count[1]+"\n"+count[2]+"\n"+count[3]+"\n"+count[4]+"\n"+count[5]);
 		Block origBlock = block.clone();
 		int matrix[][][] = {
 				{{0,0,-1}, {0,1,0}, {1,0,0}},
@@ -106,10 +116,10 @@ public class GameCore implements Runnable {
 		mRenderer.buildBlock(block);
 	}
 	void rotate(int direction, double val) {
-        mText1.setText(direction+":"+val);
+		displayMsg(direction+":"+val);
 	}
 	void debugTxt(String str) {
-		mText1.setText(str);
+		displayMsg(str);
 	}
 	private boolean newBlock() {
 		do {

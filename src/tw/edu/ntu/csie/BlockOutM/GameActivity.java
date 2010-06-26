@@ -6,6 +6,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,6 +17,8 @@ public class GameActivity extends Activity {
 	GameCore mCore;
 	SensorManager sm;
 	GameRenderer mGameRenderer;
+	Handler txtH;
+	TextView mText1;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,20 +33,27 @@ public class GameActivity extends Activity {
         mGameRenderer = new GameRenderer();
         mGLSurfaceView.setRenderer(mGameRenderer);
         //setContentView(mGLSurfaceView);
-        mCore = new GameCore((TextView)findViewById(R.id.text1), mGameRenderer);
+        mText1 = (TextView)findViewById(R.id.text1);
+        txtH = new msgHandler();
+        mCore = new GameCore(txtH, mGameRenderer);
 		sm=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		sm.registerListener(mCore.sensorListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
 		sm.registerListener(mCore.sensorListener, sm.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);
-		Thread tCore = new Thread(mCore);
-		tCore.start();
-		
-
 
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        Thread tCore = new Thread(mCore);
+		tCore.start();
     }
 
+    class msgHandler extends Handler {
+    	public void handleMessage(Message msg){
+    		mText1.setText((String)msg.obj);
+    		super.handleMessage(msg);
+    	}
+    }
     @Override
     public void onResume() {
 //    protected void onResume() {

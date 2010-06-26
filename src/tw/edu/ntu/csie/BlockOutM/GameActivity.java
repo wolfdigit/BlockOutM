@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -48,6 +49,22 @@ public class GameActivity extends Activity {
 		tCore.start();
     }
 
+    public boolean onTouchEvent(MotionEvent event){
+    	float x=event.getX();
+    	float y=event.getY();
+    	switch(event.getAction()){
+    	case MotionEvent.ACTION_DOWN:
+    		mCore.displayMsg("x:"+x);
+    	case MotionEvent.ACTION_UP:
+    		mCore.displayMsg("y:"+y);
+    	case MotionEvent.ACTION_MOVE:
+    		mCore.displayMsg("x:"+x+"y:"+y);
+    		break;
+    	default:
+    	}
+    	return super.onTouchEvent(event);
+    }
+    
     class msgHandler extends Handler {
     	public void handleMessage(Message msg){
     		mText1.setText((String)msg.obj);

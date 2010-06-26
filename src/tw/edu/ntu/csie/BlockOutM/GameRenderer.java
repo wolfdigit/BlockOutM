@@ -12,18 +12,22 @@ import android.opengl.GLSurfaceView;
 
 class GameRenderer implements GLSurfaceView.Renderer {
 	//private Cube mCube;
+	DepthTable mDepthTable;
     public GameRenderer() {
         mGameBoard = new GameBoard();
+        mDepthTable = new DepthTable();
         //mCube = new Cube();
     }
     float near=7.0f;
 
     public void buildPile(boolean occupy[][][]) {
     	mGameBoard.buildPile(occupy);
+    	mDepthTable.buildPile(occupy);
     }
     
     public void buildBlock(Block block) {
     	mGameBoard.buildBlock(block);
+    	mDepthTable.buildBlock(block);
     }
     
     public void onDrawFrame(GL10 gl) {
@@ -50,6 +54,9 @@ class GameRenderer implements GLSurfaceView.Renderer {
         gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
         mGameBoard.draw(gl);
+        gl.glRotatef(90, -1, 0, 0);
+        gl.glTranslatef(-mGameBoard.H, 0, 0);
+        mDepthTable.draw(gl);
         //mCube.draw(gl);
 
 //        gl.glRotatef(mAngle*2.0f, 0, 1, 1);

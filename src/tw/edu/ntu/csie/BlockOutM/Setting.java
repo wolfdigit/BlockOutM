@@ -1,7 +1,7 @@
 package tw.edu.ntu.csie.BlockOutM;
 
 class Setting {
-	static int h=5, w=5, d=10;
+	static int h=5, w=6, d=10;
 	static boolean drawWallFace=true;
 	static boolean drawStraightDown=false;
 	static boolean drawCoverGrid=false;

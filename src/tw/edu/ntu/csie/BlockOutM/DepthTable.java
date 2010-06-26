@@ -16,7 +16,7 @@ public class DepthTable {
 	private ShortBuffer mBlockLineIdxBuffer, mPileLineIdxBuffer[], mPileFaceIdxBuffer[];
 	public DepthTable()
     {
-        float one = 1.0f;
+        float one = (float)Setting.h/(float)Setting.d;
         h=1; w=1; d=Setting.d;
         H = h * one; W = w * one; D = d * one;
         mPileLineIdxBuffer = new ShortBuffer[Setting.d];
@@ -46,11 +46,13 @@ public class DepthTable {
         		pointIdx[0][0][0], pointIdx[0][h][0], pointIdx[d][h][0],
         		pointIdx[0][0][0], pointIdx[d][h][0], pointIdx[d][0][0],
         		pointIdx[0][0][0], pointIdx[0][0][w], pointIdx[0][h][w],
-        		pointIdx[0][0][0], pointIdx[0][h][w], pointIdx[0][h][0]//,
-        		//pointIdx[0][0][w], pointIdx[d][0][w], pointIdx[d][h][w],
-        		//pointIdx[0][0][w], pointIdx[d][h][w], pointIdx[0][h][w],
-        		//pointIdx[0][h][0], pointIdx[0][h][w], pointIdx[d][h][w],
-        		//pointIdx[0][h][0], pointIdx[d][h][w], pointIdx[d][h][0]
+        		pointIdx[0][0][0], pointIdx[0][h][w], pointIdx[0][h][0],
+        		pointIdx[0][0][w], pointIdx[d][0][w], pointIdx[d][h][w],
+        		pointIdx[0][0][w], pointIdx[d][h][w], pointIdx[0][h][w],
+        		pointIdx[0][h][0], pointIdx[0][h][w], pointIdx[d][h][w],
+        		pointIdx[0][h][0], pointIdx[d][h][w], pointIdx[d][h][0],
+        		pointIdx[d][0][0], pointIdx[d][0][w], pointIdx[d][h][w],
+        		pointIdx[d][0][0], pointIdx[d][h][w], pointIdx[d][h][0]
         };
         
         short wallGridIdx[] = new short[((h+1)*3+(w+1)*3+(d+1)*4)*2];
@@ -216,10 +218,16 @@ public class DepthTable {
             mPileLineIdxBuffer[x].put(pileLineIdx);
             mPileLineIdxBuffer[x].position(0);
 
-    		short pileFaceIdx[] = new short[n*5*2*3];
-        	pileFaceSize[x] = n*5*2*3;
+    		short pileFaceIdx[] = new short[n*6*2*3];
+        	pileFaceSize[x] = n*6*2*3;
     		idx=0;
  			if (n>0) {
+ 				pileFaceIdx[idx++] = pointIdx[x][y][z];
+    		    pileFaceIdx[idx++] = pointIdx[x][y][z+1];
+    		    pileFaceIdx[idx++] = pointIdx[x][y+1][z+1];
+    		    pileFaceIdx[idx++] = pointIdx[x][y][z];
+    		    pileFaceIdx[idx++] = pointIdx[x][y+1][z+1];
+    		    pileFaceIdx[idx++] = pointIdx[x][y+1][z];
  				pileFaceIdx[idx++] = pointIdx[x+1][y][z];
     		    pileFaceIdx[idx++] = pointIdx[x+1][y][z+1];
     		    pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
@@ -227,6 +235,7 @@ public class DepthTable {
     		    pileFaceIdx[idx++] = pointIdx[x+1][y+1][z+1];
     		    pileFaceIdx[idx++] = pointIdx[x+1][y+1][z];
 
+    		    
     		    pileFaceIdx[idx++] = pointIdx[x][y][z];
     		    pileFaceIdx[idx++] = pointIdx[x][y][z+1];
     		    pileFaceIdx[idx++] = pointIdx[x+1][y][z+1];

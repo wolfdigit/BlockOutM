@@ -30,7 +30,9 @@ class GameRenderer implements GLSurfaceView.Renderer {
     	mDepthTable.buildBlock(block);
     }
     
+    float leftMost;
     public void onDrawFrame(GL10 gl) {
+    	float eps = 0.01f;
         /*
          * Usually, the first thing one might want to do is to clear
          * the screen. The most efficient way of doing this is to use
@@ -45,6 +47,12 @@ class GameRenderer implements GLSurfaceView.Renderer {
 
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
+        //gl.glPushMatrix();
+        gl.glTranslatef(leftMost, -mDepthTable.D/2, -near);
+        gl.glRotatef(90, -1, 0, 0);
+        mDepthTable.draw(gl);
+        //gl.glPopMatrix();
+        gl.glLoadIdentity();
         //gl.glTranslatef(0, 0, -1.0f);
         gl.glTranslatef(-mGameBoard.W/2, -mGameBoard.H/2, -near-mGameBoard.D);
 //        gl.glRotatef(mAngle,        0, 1, 0);
@@ -54,9 +62,6 @@ class GameRenderer implements GLSurfaceView.Renderer {
         gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
         mGameBoard.draw(gl);
-        gl.glRotatef(90, -1, 0, 0);
-        gl.glTranslatef(-mGameBoard.H, 0, 0);
-        mDepthTable.draw(gl);
         //mCube.draw(gl);
 
 //        gl.glRotatef(mAngle*2.0f, 0, 1, 1);
@@ -93,9 +98,11 @@ class GameRenderer implements GLSurfaceView.Renderer {
          //gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
          if (mGameBoard.W/mGameBoard.H>ratio) {
              gl.glFrustumf(-mGameBoard.W/2-eps, mGameBoard.W/2+eps, -mGameBoard.W/ratio/2-eps, mGameBoard.W/ratio/2+eps, near-eps, near+mGameBoard.D+eps);
+             leftMost = -mGameBoard.W/2;
          }
          else {
              gl.glFrustumf(-mGameBoard.H*ratio/2-eps, mGameBoard.H*ratio/2+eps, -mGameBoard.H/2-eps, mGameBoard.H/2+eps, near-eps, near+mGameBoard.D+eps);
+             leftMost = -mGameBoard.H*ratio/2;
          }
          //gl.glFrustumf(0.0f, 10000.0f, 0.0f, 2.0f, 0, 0);
     }

@@ -6,10 +6,15 @@ public class Block {
 	byte block[][];
 	static Block[][] set = {
 		{
-/*		new Block(new byte[][]{{0,0,0}}),
+		new Block(new byte[][]{{0,0,0}}),
 		new Block(new byte[][]{{0,0,0}, {1,0,0}}),
-		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}}),*/
-		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}, {2,0,0}})
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {2,0,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}, {2,0,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}, {-1,0,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {0,1,0}, {1,1,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {1,1,0}, {2,1,0}}),
+		new Block(new byte[][]{{0,0,0}, {1,0,0}, {1,-1,0}, {2,-1,0}}),
 		}
 	};
 	int x(int idx) {
